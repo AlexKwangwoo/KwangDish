@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import * as Joi from 'joi';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
+import { User } from './users/entities/user.entity';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -44,7 +47,8 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       //이걸 true로 하면 알아서 DB와 typeorm을 자동으로 동기화한다!
       // 즉 prod모드일때는 내가 설정한다!
       logging: true,
-      entities: [Restaurant],
+      entities: [User],
+      // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),
     GraphQLModule.forRoot({
@@ -54,7 +58,9 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
     //GraphQLModule 여기서 resolver와 query 을 요청해서 우리가
     //resolver파일은 만든것임!!
     // schema안가지고 있어도 메모리에 자동으로 저장된다!
-    RestaurantsModule,
+    // RestaurantsModule,
+    UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
