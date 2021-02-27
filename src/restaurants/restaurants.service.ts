@@ -12,6 +12,8 @@ export class RestaurantService {
   constructor(
     //밑에껄 inject하기위해 restaurant module에서
     // 가져온것임!! imports: [TypeOrmModule.forFeature([Restaurant])],
+    //InjectRepository VS Inject차이는 InjectRepository는 repository기능
+    // 다 쓸수있다. ex) findOne, find ...and so on
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
   ) {}

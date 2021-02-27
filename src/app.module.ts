@@ -8,6 +8,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -31,6 +32,7 @@ import { User } from './users/entities/user.entity';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        PRIVATE_KEY: Joi.string().required(),
       }),
     }),
     //TypeORM decorators are for the DB.
@@ -51,6 +53,8 @@ import { User } from './users/entities/user.entity';
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),
+    //dynamic모듈은 설정을 할수있는 모듈이고
+    //static모듈은 설정없는 그대로의 모듈이다!!
     GraphQLModule.forRoot({
       autoSchemaFile: true,
     }),
@@ -59,6 +63,11 @@ import { User } from './users/entities/user.entity';
     //resolver파일은 만든것임!!
     // schema안가지고 있어도 메모리에 자동으로 저장된다!
     // RestaurantsModule,
+    JwtModule.forRoot({
+      privateKey: process.env.PRIVATE_KEY,
+    }),
+
+    //이밑에친구들은 static모듈임!!
     UsersModule,
     CommonModule,
   ],
