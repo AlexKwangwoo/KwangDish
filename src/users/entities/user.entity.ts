@@ -4,7 +4,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { InternalServerErrorException } from '@nestjs/common';
@@ -21,7 +21,10 @@ enum UserRole {
 //name은 그래프큐엘에 적용될이름!
 registerEnumType(UserRole, { name: 'UserRole' });
 
-//isAbstract true -> 확장을 가능하게 해줌!
+//isAbstract true -> 확장을 가능하게 해줌!!!!
+//We don't want to create an InputType
+//with ALL the properties of the entity,
+//that's why we make it 'abstract'(즉확장만해줌!!중복막기!)
 @InputType({ isAbstract: true })
 @ObjectType()
 @Entity()
@@ -40,9 +43,10 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
-  //데이터베이스에 저장되기전에 무조껀 실행되는함수!!!
+  //데이터베이스에 (insert와update)저장되기전에 무조껀 실행되는함수!!!
   //hash하기 위해 bcrypt사용할 것임!!
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword(): Promise<void> {
     try {
       //비밀번호를 바꿀것임!!못알아보게!! 10번의 round를 걸쳐 바꿀것임!

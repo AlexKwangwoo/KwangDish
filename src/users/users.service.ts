@@ -4,9 +4,10 @@ import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { User } from './entities/user.entity';
 import { LoginInput } from './dtos/login.dto';
-import { ConfigService } from '@nestjs/config';
-import * as jwt from 'jsonwebtoken';
+// import { ConfigService } from '@nestjs/config';
+// import * as jwt from 'jsonwebtoken';
 import { JwtService } from 'src/jwt/jwt.service';
+import { EditProfileInput } from './dtos/edit-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -79,5 +80,36 @@ export class UserService {
         error,
       };
     }
+  }
+  async findById(id: number): Promise<User> {
+    return this.users.findOne({ id });
+    //findOne은 typeorm이 제공하는 함수이다!
+  }
+
+  //userId는 @AuthUser() authUser: User, 를통해(토큰) 가져온다!
+  // { email, password }: EditProfileInput 이렇게 해줘서 업데이트하면안된다.
+  //password를 안바꿀경우 undefined로가게되어 오류발생한다!
+  // async editProfile(userId: number, editProfileInput: EditProfileInput) {
+  //   // console.log(editProfileInput);
+  //   return this.users.update(userId, { ...editProfileInput });
+  //
+  //
+  //*******************update 사용이안됨.. @BeforeUpdate가 작동을안함!!
+  //그냥 db에 보내지기만하고 안바뀜....................
+  //*******************그래서 save를 사용해서 저장하기로함!!***********/
+  //
+  async editProfile(
+    userId: number,
+    { email, password }: EditProfileInput,
+  ): Promise<User> {
+    const user = await this.users.findOne(userId);
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    //save는 만약 user가 존재하면 업데이트를하고 없으면 create를 한다!
+    return this.users.save(user);
   }
 }

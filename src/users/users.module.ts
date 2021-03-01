@@ -11,5 +11,8 @@ import { UserService } from './users.service';
   imports: [TypeOrmModule.forFeature([User])],
   //import를 통해 service에서 repository사용가능하게 했음!
   providers: [UserResolver, UserService],
+
+  //jwtMiddleware에서 쓰기 위해 export해준다!
+  exports: [UserService],
 })
 export class UsersModule {}

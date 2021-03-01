@@ -16,6 +16,11 @@ export class JwtService {
   //그래서 userService에서는 userID만 받아와 number로 적용을한것에만 privatekey를
   //사용해서 토큰을 만들어줄꺼임!!
   sign(userId: number): string {
+    // console.log('private', this.options.privateKey);
     return jwt.sign({ id: userId }, this.options.privateKey);
+  }
+  //sign해서 만든 토큰을 가지고 계속 verify해서 이용할것임!
+  verify(token: string) {
+    return jwt.verify(token, this.options.privateKey);
   }
 }

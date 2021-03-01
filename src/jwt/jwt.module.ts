@@ -1,7 +1,12 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { JwtService } from './jwt.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { UsersModule } from 'src/users/users.module';
+import { UserService } from 'src/users/users.service';
 import { CONFIG_OPTIONS } from './jwt.constants';
 import { JwtModuleOptions } from './jwt.interfaces';
+import { JwtMiddleware } from './jwt.middleware';
+import { JwtService } from './jwt.service';
 
 //Dynamic 모듈은 다른 모듈을 반환해주는 모듈임
 //@Global() 붙여주게되면 다른곳에서 import없이 사용가능!

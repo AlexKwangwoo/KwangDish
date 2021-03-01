@@ -1,4 +1,4 @@
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -7,6 +7,8 @@ import {
 
 //여기는 모든곳에서 공통으로 쓰여질 친구들이 올것임!!
 //그래서 여기서 다른친구들 거름이 됨!!
+//ObjectType안쓰면 다른곳에서 id랑 createdAt...등 못씀!
+@ObjectType()
 export class CoreEntity {
   @PrimaryGeneratedColumn()
   @Field((type) => Number)

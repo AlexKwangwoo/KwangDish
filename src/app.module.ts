@@ -1,14 +1,19 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RestaurantsModule } from './restaurants/restaurants.module';
 import * as Joi from 'joi';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -57,6 +62,8 @@ import { JwtModule } from './jwt/jwt.module';
     //static모듈은 설정없는 그대로의 모듈이다!!
     GraphQLModule.forRoot({
       autoSchemaFile: true,
+      context: ({ req }) => ({ user: req['user'] }),
+      //jwt미들웨어에서 받은 토큰해석 user정보를 모든 resolver에서 공유할것임
     }),
     //Schema First말고 codeFirst쓰는데..
     //GraphQLModule 여기서 resolver와 query 을 요청해서 우리가
@@ -65,13 +72,25 @@ import { JwtModule } from './jwt/jwt.module';
     // RestaurantsModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
+      //여기서 jwtInterface에 값을 전달하고 jwtInterface가 jwtmodule에 쓰이고
+      //service sign에도 쓰이게됨!!
     }),
 
     //이밑에친구들은 static모듈임!!
     UsersModule,
-    CommonModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    //그래프큐엘의 모든post 메소드를 실행할때 미들웨어를 거쳐갈것임!!!
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
+  }
+}
+//여기 안에 미들웨어 설정가능! 여기서는 main과 다르게 consumer이용해!
+// 어디에서만 쓸지 정할수도 있음! JwtMiddleware를 쓸껀데
+// 모든 graphql에 쓸것이고 모든메소드
+//이용가능하게할것임!(post만 가능 이렇게도됨)

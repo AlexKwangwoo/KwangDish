@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
-import { MutationOutput } from 'src/common/dtos/output.dto';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { User } from '../entities/user.entity';
 
 //여기서 resolver에서 mutation을
@@ -17,4 +17,4 @@ export class CreateAccountInput extends PickType(User, [
 
 //그래프큐엘 오브젝트타입안에 만들어야함!
 @ObjectType()
-export class CreateAccountOutput extends MutationOutput {}
+export class CreateAccountOutput extends CoreOutput {}
