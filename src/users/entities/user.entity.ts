@@ -34,7 +34,11 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  //beforeUpdate에 의해 verfication 이메일할때
+  //hash되어있는 비밀번호가 한번더 hash된다!! 이걸막기위해
+  //password가 직접 업데이트 되지않을때는 그냥 나둔다!!
+  // @Column()
+  @Column({ select: false })
   @Field((type) => String)
   password: string;
 
@@ -43,17 +47,24 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field((type) => Boolean)
+  verified: boolean;
+
   //데이터베이스에 (insert와update)저장되기전에 무조껀 실행되는함수!!!
   //hash하기 위해 bcrypt사용할 것임!!
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      //비밀번호를 바꿀것임!!못알아보게!! 10번의 round를 걸쳐 바꿀것임!
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (e) {
-      console.log(e);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      //패스워드가 포함될때만 해쉬할것이다!!
+      try {
+        //비밀번호를 바꿀것임!!못알아보게!! 10번의 round를 걸쳐 바꿀것임!
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (e) {
+        console.log(e);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

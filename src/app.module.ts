@@ -14,6 +14,7 @@ import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
+import { Verification } from './users/entities/verification.entity';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -54,7 +55,7 @@ import { AuthModule } from './auth/auth.module';
       //이걸 true로 하면 알아서 DB와 typeorm을 자동으로 동기화한다!
       // 즉 prod모드일때는 내가 설정한다!
       logging: true,
-      entities: [User],
+      entities: [User, Verification],
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),
