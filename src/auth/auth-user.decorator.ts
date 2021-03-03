@@ -7,6 +7,7 @@ export const AuthUser = createParamDecorator(
     //그래프큐엘은 다르기때문에 알아못먹는다! guard랑 비슷하다!
     const gqlContext = GqlExecutionContext.create(context).getContext();
     const user = gqlContext['user'];
+    // console.log('user', user);
     return user;
   },
 );

@@ -15,6 +15,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
+import { MailModule } from './mail/mail.module';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -39,6 +40,9 @@ import { Verification } from './users/entities/verification.entity';
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(),
+        MAILGUN_API_KEY: Joi.string().required(),
+        MAILGUN_DOMAIN_NAME: Joi.string().required(),
+        MAILGUN_FROM_EMAIL: Joi.string().required(),
       }),
     }),
     //TypeORM decorators are for the DB.
@@ -76,9 +80,16 @@ import { Verification } from './users/entities/verification.entity';
       //여기서 jwtInterface에 값을 전달하고 jwtInterface가 jwtmodule에 쓰이고
       //service sign에도 쓰이게됨!!
     }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain: process.env.MAILGUN_DOMAIN_NAME,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL,
+    }),
 
     //이밑에친구들은 static모듈임!!
     UsersModule,
+
+    MailModule,
   ],
   controllers: [],
   providers: [],

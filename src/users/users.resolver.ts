@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import {
@@ -12,6 +12,9 @@ import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
+//***************resolver는 일종의 문지기 같은 역할을 한다고 생각!! ****/
+//input을 받아드리고 input을 올바른 service로 전달해준다..
+//service는 비지니스 로직을 가지고 있따
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -30,32 +33,33 @@ export class UserResolver {
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
     //CreateAccountOutput 반환이기에 error와ok를 보냄..error는 nullable true임!
-    try {
-      // const error = await this.usersService.createAccount(createAccountInput);
-      // //성공했으면 return이 없기에 error가 null일것임!!
-      // //실패했으면 error에 return값이 올것임!
-      // if (error) {
-      //   return {
-      //     ok: false,
-      //     error,
-      //   };
-      // }
-      // return {
-      //   ok: true,
-      // };
-      const { ok, error } = await this.usersService.createAccount(
-        createAccountInput,
-      );
-      return {
-        ok,
-        error,
-      };
-    } catch (error) {
-      return {
-        error,
-        ok: false,
-      };
-    }
+    // try {
+    // const error = await this.usersService.createAccount(createAccountInput);
+    // //성공했으면 return이 없기에 error가 null일것임!!
+    // //실패했으면 error에 return값이 올것임!
+    // if (error) {
+    //   return {
+    //     ok: false,
+    //     error,
+    //   };
+    // }
+    // return {
+    //   ok: true,
+    // };
+    // const { ok, error } = await this.usersService.createAccount(
+    //     createAccountInput,
+    //   );
+    //   return {
+    //     ok,
+    //     error,
+    //   };
+    // } catch (error) {
+    //   return {
+    //     error,
+    //     ok: false,
+    //   };
+    // }
+    return this.usersService.createAccount(createAccountInput);
   }
 
   //login.dto에서 email과 password를 input받고
@@ -63,15 +67,16 @@ export class UserResolver {
   // error와 ok도 같이 갈것이다!
   @Mutation((returns) => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
-    try {
-      const { ok, error, token } = await this.usersService.login(loginInput);
-      return { ok, error, token };
-    } catch (error) {
-      return {
-        ok: false,
-        error,
-      };
-    }
+    // try {
+    //   const { ok, error, token } = await this.usersService.login(loginInput);
+    //   return { ok, error, token };
+    // } catch (error) {
+    //   return {
+    //     ok: false,
+    //     error,
+    //   };
+    // }
+    return this.usersService.login(loginInput);
   }
 
   //appmodule에서 가져온 (jwt미들웨어 user정보를 사용할것임!)
@@ -81,10 +86,11 @@ export class UserResolver {
   //그래서 우리의 decorator(@AuthUser())를 만들어보자!
   //auth-user.decorator에서 return한것이 authUser로 보내질것임!
   //그 타입이 User가 됨!
-  @Query((returns) => User)
   @UseGuards(AuthGuard)
+  @Query((returns) => User)
   me(@AuthUser() authUser: User) {
-    return authUser;
+    // console.log('authUser,authUser,authUser', authUser['user']);
+    return authUser['user'];
   }
 
   @UseGuards(AuthGuard)
@@ -92,59 +98,62 @@ export class UserResolver {
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
-    try {
-      const user = await this.usersService.findById(userProfileInput.userId);
-      if (!user) {
-        throw Error();
-      }
-      return {
-        ok: true,
-        user,
-      };
-    } catch (e) {
-      return {
-        error: 'User Not Found',
-        ok: false,
-      };
-    }
+    // try {
+    //   const user = await this.usersService.findById(userProfileInput.userId);
+    //   if (!user) {
+    //     throw Error();
+    //   }
+    //   return {
+    //     ok: true,
+    //     user,
+    //   };
+    // } catch (e) {
+    //   return {
+    //     error: 'User Not Found',
+    //     ok: false,
+    //   };
+    // }
+    return this.usersService.findById(userProfileInput.userId);
   }
 
   //@UseGuards 를 쓰는순간 로그인안해있으면 그 밑줄 코드
   //실행 불가능... 이유는 토큰을 모르기떄문!
-  @UseGuards(AuthGuard)
   @Mutation((returns) => EditProfileOutput)
+  @UseGuards(AuthGuard)
   async editProfile(
     //AuthUser현재 유저에 대한정보를 준다!
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
-    try {
-      await this.usersService.editProfile(authUser.id, editProfileInput);
-      return {
-        ok: true,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        error,
-      };
-    }
+    // try {
+    //   await this.usersService.editProfile(authUser.id, editProfileInput);
+    //   return {
+    //     ok: true,
+    //   };
+    // } catch (error) {
+    //   return {
+    //     ok: false,
+    //     error,
+    //   };
+    // }
+    return this.usersService.editProfile(authUser.id, editProfileInput);
   }
 
   @Mutation((returns) => VerifyEmailOutput)
-  async verifyEmail(
+  verifyEmail(
     @Args('input') { code }: VerifyEmailInput,
   ): Promise<VerifyEmailOutput> {
-    try {
-      await this.usersService.verifyEmail(code);
-      return {
-        ok: true,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        error,
-      };
-    }
+    // try {
+    //   await this.usersService.verifyEmail(code);
+    //   return {
+    //     ok: true,
+    //   };
+    // } catch (error) {
+    //   return {
+    //     ok: false,
+    //     error,
+    //   };
+    // }
+    return this.usersService.verifyEmail(code);
   }
 }
