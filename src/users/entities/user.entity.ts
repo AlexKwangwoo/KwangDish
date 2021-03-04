@@ -7,6 +7,12 @@ import {
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CoreEntity } from 'src/common/entities/core.entity';
+//Jest는 이방식이 사용 어렵다!! 'src/common/entities/core.entity';
+//그래서 경로 수정을 해줘야한다!
+// "moduleNameMapper": {
+//   "^src/(.*)$": "<rootDir>/$1"
+// },
+//json에서 jest의 위에걸 통해서 수정가능하다
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum } from 'class-validator';
 
