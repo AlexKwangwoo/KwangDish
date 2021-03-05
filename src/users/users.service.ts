@@ -122,19 +122,18 @@ export class UserService {
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: "Can't log user in.",
       };
     }
   }
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOne({ id });
-      if (user) {
-        return {
-          ok: true,
-          user: user,
-        };
-      }
+      const user = await this.users.findOneOrFail({ id });
+      //못찾으면 fail을 리턴 user내용이 없기에 catch로 갈것임!
+      return {
+        ok: true,
+        user,
+      };
     } catch (error) {
       return { ok: false, error: 'User Not Found' };
     }
@@ -196,6 +195,7 @@ export class UserService {
     // { relations: ['user'] }, 대신
     // loadRelationIds: true하면 그냥 아이디만 가져온다!!
     try {
+      //여기서 verification 에서는 찾은 유저가 들어갈것이다!
       const verification = await this.verifications.findOne(
         { code },
         { relations: ['user'] },
@@ -211,7 +211,7 @@ export class UserService {
       }
       return { ok: false, error: 'Verification not found.' };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not verify email.' };
     }
   }
 }
