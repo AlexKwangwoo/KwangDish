@@ -32,7 +32,7 @@ import { MailModule } from './mail/mail.module';
 
       //envFilePath를 설정했기에.. 거기서 유효성 검사를 하는것임!
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').required(),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
         //어느 모드의 env인지 체크!
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
@@ -58,7 +58,8 @@ import { MailModule } from './mail/mail.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       //이걸 true로 하면 알아서 DB와 typeorm을 자동으로 동기화한다!
       // 즉 prod모드일때는 내가 설정한다!
-      logging: true,
+      logging:
+        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [User, Verification],
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!

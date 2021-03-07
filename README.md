@@ -1,3 +1,5 @@
+to start : npm run start:dev
+
 # Nuber Eats
 
 The Backend of Nuber Eats Clone
