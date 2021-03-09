@@ -155,6 +155,8 @@ export class UserService {
   //그냥 db에 보내지기만하고 안바뀜....................
   //*******************그래서 save를 사용해서 저장하기로함!!***********/
   //
+
+  //이메일 중복인지 같은걸로 바꿀려는지 체크하자!!
   async editProfile(
     userId: number,
     { email, password }: EditProfileInput,
@@ -169,6 +171,8 @@ export class UserService {
         //이유는 이미 verification code가 userId와 1:1관계를 맺고 있다
         // 하지만 email수정을하면 다른하나의 verification코드가 이미 1:1관계를
         //맺고있는 userId와 겹치게된다.. 그래서 verified를 통해 이전껄 삭제해줘야한다!!!!!!
+        //verified안되도 프로필 수정전에 그냥 삭제 해주면됨!!
+        await this.verifications.delete({ user: { id: user.id } });
         const verification = await this.verifications.save(
           this.verifications.create({ user }),
         );

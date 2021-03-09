@@ -23,6 +23,11 @@ The Backend of Nuber Eats Clone
 - Edit Profile
 - Verify Email
 
+## Restaurant Model
+- name
+- category
+- address
+- coverImage
 
 ## etc
 //entities는 오브젝트 개념의 리턴타입을 말해준다!

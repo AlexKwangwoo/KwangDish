@@ -4,7 +4,6 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CoreEntity } from 'src/common/entities/core.entity';
 //Jest는 이방식이 사용 어렵다!! 'src/common/entities/core.entity';
@@ -14,13 +13,17 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 // },
 //json에서 jest의 위에걸 통해서 수정가능하다
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsEmail, IsEnum } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 
 //여기는 DB를 위한곳
-enum UserRole {
-  Client,
-  Owner,
-  Delivery,
+//이걸 (오른쪽값을) 정하지 않으면 client는 0
+//Owner은 1이되는식이다!!
+export enum UserRole {
+  Client = 'Client',
+  Owner = 'Owner',
+  Delivery = 'Delivery',
 }
 
 //여기는 그래프ql을 위한곳!!
@@ -30,12 +33,15 @@ registerEnumType(UserRole, { name: 'UserRole' });
 //isAbstract true -> 확장을 가능하게 해줌!!!!
 //We don't want to create an InputType
 //with ALL the properties of the entity,
-//that's why we make it 'abstract'(즉확장만해줌!!중복막기!)
-@InputType({ isAbstract: true })
+
+//UserInputType 을 적어줌으로써 InputType과 objectType의 이름같은걸
+//막아야한다.. grqphql schema에는 한번만 정의되는데 이름을 안써주면
+//중복정의가 되기때문이다!
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
-  @Column()
+  @Column({ unique: true })
   @Field((type) => String)
   @IsEmail()
   email: string;
@@ -46,6 +52,7 @@ export class User extends CoreEntity {
   // @Column()
   @Column({ select: false })
   @Field((type) => String)
+  @IsString()
   password: string;
 
   @Column({ type: 'enum', enum: UserRole })
@@ -55,7 +62,12 @@ export class User extends CoreEntity {
 
   @Column({ default: false })
   @Field((type) => Boolean)
+  @IsBoolean()
   verified: boolean;
+
+  @Field((type) => [Restaurant])
+  @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
+  restaurants: Restaurant[];
 
   //데이터베이스에 (insert와update)저장되기전에 무조껀 실행되는함수!!!
   //hash하기 위해 bcrypt사용할 것임!!

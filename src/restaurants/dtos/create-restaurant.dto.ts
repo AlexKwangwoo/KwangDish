@@ -1,5 +1,5 @@
-import { ArgsType, Field, InputType, OmitType } from '@nestjs/graphql';
-import { IsBoolean, IsString, Length } from 'class-validator';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Restaurant } from '../entities/restaurant.entity';
 
 // 이렇게 하면 @Args 안에 이름을 써야한다!
@@ -49,7 +49,17 @@ import { Restaurant } from '../entities/restaurant.entity';
 //InputType 에서만 작동한다 그래서 entity에 InputType @ 넣어줘야함!
 //InputType을 entity에 안써주면 objecttype이 될것이다.. 그럼 적용안됨!
 @InputType()
-export class CreateRestaurantDto extends OmitType(Restaurant, ['id']) {}
+export class CreateRestaurantInput extends PickType(Restaurant, [
+  'name',
+  'coverImg',
+  'address',
+]) {
+  @Field((type) => String)
+  categoryName: string;
+}
+
+@ObjectType()
+export class CreateRestaurantOutput extends CoreOutput {}
 
 //또는 entity에 @Inputtype안쓰고싶으면
 //@InputType()

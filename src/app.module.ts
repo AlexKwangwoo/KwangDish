@@ -16,6 +16,9 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { Category } from './restaurants/entities/category.entity';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -60,7 +63,7 @@ import { MailModule } from './mail/mail.module';
       // 즉 prod모드일때는 내가 설정한다!
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification],
+      entities: [User, Verification, Restaurant, Category],
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),
@@ -88,9 +91,9 @@ import { MailModule } from './mail/mail.module';
     }),
 
     //이밑에친구들은 static모듈임!!
+    AuthModule,
     UsersModule,
-
-    MailModule,
+    RestaurantsModule,
   ],
   controllers: [],
   providers: [],

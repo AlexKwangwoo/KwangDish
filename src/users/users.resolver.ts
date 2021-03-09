@@ -12,6 +12,7 @@ import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
+import { Role } from 'src/auth/role.decorator';
 //***************resolver는 일종의 문지기 같은 역할을 한다고 생각!! ****/
 //input을 받아드리고 input을 올바른 service로 전달해준다..
 //service는 비지니스 로직을 가지고 있따
@@ -32,6 +33,7 @@ export class UserResolver {
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
+    return this.usersService.createAccount(createAccountInput);
     //CreateAccountOutput 반환이기에 error와ok를 보냄..error는 nullable true임!
     // try {
     // const error = await this.usersService.createAccount(createAccountInput);
@@ -59,7 +61,6 @@ export class UserResolver {
     //     ok: false,
     //   };
     // }
-    return this.usersService.createAccount(createAccountInput);
   }
 
   //login.dto에서 email과 password를 input받고
@@ -86,14 +87,16 @@ export class UserResolver {
   //그래서 우리의 decorator(@AuthUser())를 만들어보자!
   //auth-user.decorator에서 return한것이 authUser로 보내질것임!
   //그 타입이 User가 됨!
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
+  @Role(['Any'])
   @Query((returns) => User)
   me(@AuthUser() authUser: User) {
     // console.log('authUser,authUser,authUser', authUser['user']);
-    return authUser['user'];
+    return authUser;
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
+  @Role(['Any'])
   @Query((returns) => UserProfileOutput)
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
@@ -118,8 +121,9 @@ export class UserResolver {
 
   //@UseGuards 를 쓰는순간 로그인안해있으면 그 밑줄 코드
   //실행 불가능... 이유는 토큰을 모르기떄문!
+  // @UseGuards(AuthGuard)
   @Mutation((returns) => EditProfileOutput)
-  @UseGuards(AuthGuard)
+  @Role(['Any'])
   async editProfile(
     //AuthUser현재 유저에 대한정보를 준다!
     @AuthUser() authUser: User,
