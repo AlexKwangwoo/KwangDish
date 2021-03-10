@@ -24,10 +24,31 @@ The Backend of Nuber Eats Clone
 - Verify Email
 
 ## Restaurant Model
+
 - name
 - category
 - address
 - coverImage
+
+- See Categories
+- See Restaurants by Category (pagination)
+- See Restaurants (pagination)
+- See Restaurant
+
+- Edit Restaurant
+- Delete Restaurant
+
+- Create Dish
+- Edit Dish
+- Delete Dish
+
+- Create Dish
+- Edit Dish
+- Delete Dish
+- Orders CRUD
+- Orders Subscription (Owner, Customer, Delivery)
+
+- Payments (CRON)
 
 ## etc
 //entities는 오브젝트 개념의 리턴타입을 말해준다!

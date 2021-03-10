@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { Category } from './category.entity';
 
 //entities는 오브젝트 개념의 리턴타입을 말해준다!
@@ -45,7 +45,7 @@ export class Restaurant extends CoreEntity {
   //nullable도 쓸수있으나.. 이거는 아예값이 안들어가는거고
   //defaultValue는 지정된값이.. 안쓰면 자동으로 넣어준다!
 
-  @Field((type) => String, { defaultValue: 'Calgary' })
+  @Field((type) => String)
   @Column()
   @IsString()
   address: string;
@@ -67,6 +67,17 @@ export class Restaurant extends CoreEntity {
     //유저가 삭제되면 레스토랑도 삭제될것이다!
   })
   owner: User;
+
+  //RelationId 는 밑의 친구가 가리키는것의 ID를 가져온다!
+  //restaurant.owner는 밑의 친구를 가리킨다!
+  // @Field((type) => User)
+  // @ManyToOne((type) => User, (user) => user.restaurants, {
+  //   onDelete: 'CASCADE',
+  //   //유저가 삭제되면 레스토랑도 삭제될것이다!
+  // })
+  // owner: User;
+  @RelationId((restaurant: Restaurant) => restaurant.owner)
+  ownerId: number;
 
   // @Field((type) => String)
   // @Column()
