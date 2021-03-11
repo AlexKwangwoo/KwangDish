@@ -16,6 +16,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 //여기는 DB를 위한곳
 //이걸 (오른쪽값을) 정하지 않으면 client는 0
@@ -65,9 +66,22 @@ export class User extends CoreEntity {
   @IsBoolean()
   verified: boolean;
 
+  //---중요-------------------------------------------------------------
+  //왜  restaurants?:아닌가?
+  //dto에서 선택되어야지만 restaurants가 필수로 들어가야한다..
+  //유저 만들때 pickup을 통해 restaurant부분 빼고 레스토랑 만들때 여기가 들어감!
+  //그래서 ?:이면 안됨!
   @Field((type) => [Restaurant])
   @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
   restaurants: Restaurant[];
+
+  @Field((type) => [Order])
+  @OneToMany((type) => Order, (order) => order.customer)
+  orders: Order[];
+
+  @Field((type) => [Order])
+  @OneToMany((type) => Order, (order) => order.driver)
+  rides: Order[];
 
   //데이터베이스에 (insert와update)저장되기전에 무조껀 실행되는함수!!!
   //hash하기 위해 bcrypt사용할 것임!!

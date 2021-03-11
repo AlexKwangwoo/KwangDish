@@ -2,8 +2,10 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Category } from './category.entity';
+import { Dish } from './dish.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 //entities는 오브젝트 개념의 리턴타입을 말해준다!
 // @ObjectType() 이건 그래프큐엘을 위한것
@@ -68,6 +70,10 @@ export class Restaurant extends CoreEntity {
   })
   owner: User;
 
+  @Field((type) => [Order])
+  @OneToMany((type) => Order, (order) => order.restaurant)
+  orders: Order[];
+
   //RelationId 는 밑의 친구가 가리키는것의 ID를 가져온다!
   //restaurant.owner는 밑의 친구를 가리킨다!
   // @Field((type) => User)
@@ -78,6 +84,10 @@ export class Restaurant extends CoreEntity {
   // owner: User;
   @RelationId((restaurant: Restaurant) => restaurant.owner)
   ownerId: number;
+
+  @Field((type) => [Dish])
+  @OneToMany((type) => Dish, (dish) => dish.restaurant)
+  menu: Dish[];
 
   // @Field((type) => String)
   // @Column()

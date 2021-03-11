@@ -9,7 +9,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
@@ -19,6 +18,10 @@ import { MailModule } from './mail/mail.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
+import { Dish } from './restaurants/entities/dish.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -63,7 +66,15 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       // 즉 prod모드일때는 내가 설정한다!
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification, Restaurant, Category],
+      entities: [
+        User,
+        Verification,
+        Restaurant,
+        Category,
+        Dish,
+        Order,
+        OrderItem,
+      ],
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),
@@ -94,6 +105,8 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
     AuthModule,
     UsersModule,
     RestaurantsModule,
+    OrdersModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],
