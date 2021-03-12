@@ -12,9 +12,11 @@ export class OrderItemOption {
   @Field((type) => String)
   name: string;
   @Field((type) => String, { nullable: true })
-  choice?: string;
-  @Field((type) => Int, { nullable: true })
-  extra?: number;
+  choice: string;
+  //여기는 사용자가 정하는곳이다!! 그래서 extra 가격을 손님이 정하면안되기에
+  //뺐음!!
+  // @Field(type => Int, { nullable: true })
+  // extra?: number;
 }
 
 //dish entity에서는 그 한개음식의 세부적인 맛, 재료등을 저장못해

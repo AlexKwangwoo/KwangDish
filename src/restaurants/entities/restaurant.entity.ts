@@ -70,10 +70,6 @@ export class Restaurant extends CoreEntity {
   })
   owner: User;
 
-  @Field((type) => [Order])
-  @OneToMany((type) => Order, (order) => order.restaurant)
-  orders: Order[];
-
   //RelationId 는 밑의 친구가 가리키는것의 ID를 가져온다!
   //restaurant.owner는 밑의 친구를 가리킨다!
   // @Field((type) => User)
@@ -84,6 +80,10 @@ export class Restaurant extends CoreEntity {
   // owner: User;
   @RelationId((restaurant: Restaurant) => restaurant.owner)
   ownerId: number;
+
+  @Field((type) => [Order])
+  @OneToMany((type) => Order, (order) => order.restaurant)
+  orders: Order[];
 
   @Field((type) => [Dish])
   @OneToMany((type) => Dish, (dish) => dish.restaurant)
