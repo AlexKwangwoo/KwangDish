@@ -50,6 +50,12 @@ The Backend of Nuber Eats Clone
 
 - Payments (CRON)
 
+- Orders Subscription:
+- Pending Orders (Owner) (T: createOrder)
+- Order Status (Customer, Delivery, Owner) (T: editOrder)
+- Pending Pickup Order (Delivery)
+
+
 ## etc
 //entities는 오브젝트 개념의 리턴타입을 말해준다!
 // @ObjectType() 이건 그래프큐엘을 위한것

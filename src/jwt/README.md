@@ -1,6 +1,11 @@
 토큰을 생성하기위해
 privatekey값을 appModule에서 받아 jwtInterface에 적용시켜 jwtMoudle에 option값(useValue와 provide이름을 정한다) 그다음
 service의 sign에서 privatekey와 id를 결합해 토큰을 생성해 가지고 있는다
+
+토큰을 생성해 가지고 있는데 어떻게 jwtService의 sign이 appModule의 context로 전달하지?? 그건 jwt sign에서 저절로 localdata로 저장해둔다!! 그리고 
+request(http) 요청 될때마다 head로 토큰을 실어 넣어준다! 
+
+
 그다음 미들웨어를만들어 그레프큐엘에서 POST조건을 사용하게될때
 미들웨어를 거쳐가게되는데!! 그중에 guard를 통해 조건을 만족못할경우
 false가 뜨게 되어 guard의 CanActivate에 의해 결과값이 전송을 막게된다!

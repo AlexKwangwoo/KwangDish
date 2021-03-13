@@ -3,6 +3,10 @@ import { NextFunction, Request, Response } from 'express';
 import { UserService } from 'src/users/users.service';
 import { JwtService } from './jwt.service';
 
+//----------------------미들웨어는 subscription과 맞지않아
+//----------------------authGuard로 합쳤습니다!!!!!!!!!!!!!!!!!!!!!!
+//-----------------------------------------------------------------
+
 //request를 받아서 reponse해줄것임!! 토큰을받아서 분석해 넘길것임!
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {

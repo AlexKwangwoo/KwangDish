@@ -22,6 +22,7 @@ import { Dish } from './restaurants/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
+import { CommonModule } from './common/common.module';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -81,8 +82,34 @@ import { OrderItem } from './orders/entities/order-item.entity';
     //dynamic모듈은 설정을 할수있는 모듈이고
     //static모듈은 설정없는 그대로의 모듈이다!!
     GraphQLModule.forRoot({
+      //이걸통해서 서버가 웹소켓기능을가져서 실시간기능 가능!!
+      //웹소켓에는 request가 없다! 밑의 req undefined가 나올것임
+      //http(mutation query)는 문제없이 잘나올것임!!
+      //http는 request가 있고!! websocket에는 request가 없다!!
+      //대신 connection이 있다!
+      installSubscriptionHandlers: true,
       autoSchemaFile: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      context: ({ req, connection }) => {
+        // console.log('결과는!!!!!!!!!!!!!!!!!!!req', req);
+
+        const TOKEN_KEY = 'x-jwt';
+        const TOKEN_KEYSK = 'X-JWT';
+        return {
+          //req가 있으면 header에서 token값의 value를 가져오고
+          //connection이있으면 context(안에 x-jwt가 잇음 jwt.sign이 넣어줌)
+          //여기서 가져옴!
+          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEYSK],
+        };
+        // if (req) { ---------------중요!!!-----------------------
+        //req면 user를 줄것이고!! 매번 토큰을 보낼것임!!
+        // return { user: req['user'] }; ==> AuthGuard에 쓰임!
+        // } else {
+        //아니면 connection을.. 웹소캣은 연결할때 딱한번
+        //토큰을 보내게 된다 그래서 많은 이벤트를 받고 보내고 다시 토큰
+        //보낼 필요가 없다!
+        // console.log(connection);
+        // }
+      },
       //jwt미들웨어에서 받은 토큰해석 user정보를 모든 resolver에서 공유할것임
     }),
     //Schema First말고 codeFirst쓰는데..
@@ -106,19 +133,23 @@ import { OrderItem } from './orders/entities/order-item.entity';
     UsersModule,
     RestaurantsModule,
     OrdersModule,
-    OrdersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    //그래프큐엘의 모든post 메소드를 실행할때 미들웨어를 거쳐갈것임!!!
-    consumer
-      .apply(JwtMiddleware)
-      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
-  }
-}
+export class AppModule {}
+
+//실시간을 하기위해서는 미들웨어를 지워야함.. http에서 req를받아 미들웨어 들어가는데
+// 실시간은 웹소켓을 쓰기에 웹소켓은 달라서 Guard가 작동이 안됨!! 미들웨어도!!
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     //그래프큐엘의 모든post 메소드를 실행할때 미들웨어를 거쳐갈것임!!!
+//     consumer
+//       .apply(JwtMiddleware)
+//       .forRoutes({ path: '/graphql', method: RequestMethod.POST });
+//   }
+// }
 //여기 안에 미들웨어 설정가능! 여기서는 main과 다르게 consumer이용해!
 // 어디에서만 쓸지 정할수도 있음! JwtMiddleware를 쓸껀데
 // 모든 graphql에 쓸것이고 모든메소드
