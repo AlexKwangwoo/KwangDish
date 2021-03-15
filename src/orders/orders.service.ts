@@ -1,5 +1,5 @@
 import { OrderItem } from './entities/order-item.entity';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, OrderStatus } from './entities/order.entity';
@@ -10,6 +10,14 @@ import { Dish } from 'src/restaurants/entities/dish.entity';
 import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
+import { PubSub } from 'graphql-subscriptions';
+import {
+  NEW_COOKED_ORDER,
+  NEW_PENDING_ORDER,
+  PUB_SUB,
+  NEW_ORDER_UPDATE,
+} from 'src/common/common.constants';
+import { TakeOrderInput, TakeOrderOutput } from './dtos/take-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -22,6 +30,7 @@ export class OrderService {
     private readonly restaurants: Repository<Restaurant>,
     @InjectRepository(Dish)
     private readonly dishes: Repository<Dish>,
+    @Inject(PUB_SUB) private readonly pubSub: PubSub,
   ) {}
 
   async crateOrder(
@@ -102,7 +111,7 @@ export class OrderService {
       }
       //여기는 모든아이탬과 그아이탬들의 옵션가격이 다더해진
       //최종 오더가 저정될것임!!
-      await this.orders.save(
+      const order = await this.orders.save(
         this.orders.create({
           customer,
           restaurant,
@@ -119,6 +128,12 @@ export class OrderService {
         // }
         //계산을 넣어줘야함 option값에대한..
       );
+      //주문을 만들면 실시간에 트리거를줄것임!
+      //pendingOrders에 주문한사람이 오너인지 확인하고싶기에
+      //order내용을 넣고 레스토랑 오너 아이디도 보낼것임!
+      await this.pubSub.publish(NEW_PENDING_ORDER, {
+        pendingOrders: { order, ownerId: restaurant.ownerId },
+      });
       return {
         ok: true,
       };
@@ -270,10 +285,11 @@ export class OrderService {
     { id: orderId, status }: EditOrderInput,
   ): Promise<EditOrderOutput> {
     try {
-      const order = await this.orders.findOne(orderId, {
-        relations: ['restaurant'],
-        //여기서 restaurant 로드이유는 위에랑 똑같다!
-      });
+      // const order = await this.orders.findOne(orderId, {
+      //   relations: ['restaurant'],
+      //   //여기서 restaurant 로드이유는 위에랑 똑같다!
+      // });
+      const order = await this.orders.findOne(orderId);
       if (!order) {
         return {
           ok: false,
@@ -319,12 +335,25 @@ export class OrderService {
           error: "You can't do that.",
         };
       }
-      await this.orders.save([
-        {
-          id: orderId,
-          status,
-        },
-      ]);
+      // const newOrder = await this.orders.save({
+      //여기서 업데이트내용만 newOrder에 들어가기에 밑에서 따로 ...order
+      //를 보내줄것이다!
+      await this.orders.save({
+        id: orderId,
+        status,
+      });
+
+      //오더 내용도 같이 보내줘야한다.. 안그러면 업데이트 내용만
+      //반환받기 때문이다!
+      const newOrder = { ...order, status };
+      if (user.role === UserRole.Owner) {
+        if (status === OrderStatus.Cooked) {
+          await this.pubSub.publish(NEW_COOKED_ORDER, {
+            cookedOrders: newOrder,
+          });
+        }
+      }
+      await this.pubSub.publish(NEW_ORDER_UPDATE, { orderUpdates: newOrder });
       return {
         ok: true,
       };
@@ -332,6 +361,42 @@ export class OrderService {
       return {
         ok: false,
         error: 'Could not edit order.',
+      };
+    }
+  }
+
+  async takeOrder(
+    driver: User,
+    { id: orderId }: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {
+    try {
+      const order = await this.orders.findOne(orderId);
+      if (!order) {
+        return {
+          ok: false,
+          error: 'Order not found',
+        };
+      }
+      if (order.driver) {
+        return {
+          ok: false,
+          error: 'This order already has a driver',
+        };
+      }
+      await this.orders.save({
+        id: orderId,
+        driver,
+      });
+      await this.pubSub.publish(NEW_ORDER_UPDATE, {
+        orderUpdates: { ...order, driver },
+      });
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not upate order.',
       };
     }
   }

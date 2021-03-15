@@ -9,8 +9,15 @@ import { OrderService } from './orders.service';
 import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
-import { PUB_SUB } from 'src/common/common.constants';
+import {
+  NEW_COOKED_ORDER,
+  NEW_PENDING_ORDER,
+  PUB_SUB,
+  NEW_ORDER_UPDATE,
+} from 'src/common/common.constants';
 import { Inject } from '@nestjs/common';
+import { OrderUpdatesInput } from './dtos/order-updates.dto';
+import { TakeOrderInput, TakeOrderOutput } from './dtos/take-order.dto';
 
 //publish and subscription 실시간!!
 //전체적으로 작동을 해야하기에 여기말고 다른곳에 실시간할려면??
@@ -59,6 +66,61 @@ export class OrderResolver {
   ): Promise<EditOrderOutput> {
     return this.ordersService.editOrder(user, editOrderInput);
   }
+
+  @Subscription((returns) => Order, {
+    //args생략하고싶을땐 _ 적자!
+    filter: ({ pendingOrders: { ownerId } }, _, { user }) => {
+      return ownerId === user.id;
+    },
+    //mutation에서 받아온 내용을 리졸버내용으로 바꿀것임!!
+    resolve: ({ pendingOrders: { order } }) => order,
+  })
+  @Role(['Owner'])
+  pendingOrders() {
+    return this.pubSub.asyncIterator(NEW_PENDING_ORDER);
+  }
+
+  @Subscription((returns) => Order)
+  @Role(['Delivery'])
+  cookedOrders() {
+    return this.pubSub.asyncIterator(NEW_COOKED_ORDER);
+  }
+
+  @Subscription((returns) => Order, {
+    filter: (
+      //order 불린 orderUpdates 의 타입이 !! =>
+      //{ orderUpdates: Order }, 정해주는것이다!
+      { orderUpdates: order }: { orderUpdates: Order },
+      //orderUpdates(@Args('input') orderUpdatesInput: OrderUpdatesInput) {
+      //여기서 input을 수정할 오더아이디를 받는다!
+      { input }: { input: OrderUpdatesInput },
+      { user }: { user: User },
+    ) => {
+      if (
+        order.driverId !== user.id &&
+        order.customerId !== user.id &&
+        order.restaurant.ownerId !== user.id
+      ) {
+        return false;
+      }
+      return order.id === input.id;
+    },
+  })
+  @Role(['Any'])
+  orderUpdates(@Args('input') orderUpdatesInput: OrderUpdatesInput) {
+    return this.pubSub.asyncIterator(NEW_ORDER_UPDATE);
+  }
+
+  @Mutation((returns) => TakeOrderOutput)
+  @Role(['Delivery'])
+  takeOrder(
+    @AuthUser() driver: User,
+    @Args('input') takeOrderInput: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {
+    return this.ordersService.takeOrder(driver, takeOrderInput);
+  }
+
+  //-------------------------Practice--------------------------------
 
   @Mutation((returns) => Boolean)
   async potatoReady(@Args('potatoId') potatoId: number) {
