@@ -230,6 +230,9 @@ export class RestaurantService {
         where: {
           category,
         },
+        order: {
+          isPromoted: 'DESC',
+        },
         take: 25,
         //첫페이지는 스킵안해서 0*25 두번쨰는 1*25
         //25개를 스킵하고 보여줄것임!
@@ -261,6 +264,9 @@ export class RestaurantService {
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
         skip: (page - 1) * 25,
         take: 25,
+        order: {
+          isPromoted: 'DESC',
+        }, //프로모트가 true부터 보기!
       });
       return {
         ok: true,

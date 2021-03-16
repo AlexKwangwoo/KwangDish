@@ -11,7 +11,9 @@ import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
+// import { JwtMiddleware } from './jwt/jwt.middleware';
+import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
@@ -23,6 +25,7 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
 @Module({
@@ -75,6 +78,7 @@ import { CommonModule } from './common/common.module';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
@@ -117,6 +121,7 @@ import { CommonModule } from './common/common.module';
     //resolver파일은 만든것임!!
     // schema안가지고 있어도 메모리에 자동으로 저장된다!
     // RestaurantsModule,
+    ScheduleModule.forRoot(),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
       //여기서 jwtInterface에 값을 전달하고 jwtInterface가 jwtmodule에 쓰이고
@@ -134,6 +139,7 @@ import { CommonModule } from './common/common.module';
     RestaurantsModule,
     OrdersModule,
     CommonModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
