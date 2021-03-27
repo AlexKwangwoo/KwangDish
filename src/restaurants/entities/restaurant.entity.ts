@@ -26,7 +26,7 @@ export class Restaurant extends CoreEntity {
   @Field((type) => String)
   @Column()
   @IsString()
-  @Length(5)
+  @Length(1)
   name: string;
   //이곳이 플레이그라운드에 타입으로 나옴!
 
@@ -60,6 +60,7 @@ export class Restaurant extends CoreEntity {
     //그래야 카테고리가 사라져도 레스토랑이 안사라짐!
     nullable: true,
     onDelete: 'SET NULL',
+    eager: true,
   })
   category: Category;
 

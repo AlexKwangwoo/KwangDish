@@ -23,6 +23,8 @@ export class AuthGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext) {
     const roles = this.reflector.get<AllowedRoles>(
+      //get을 통해 metaData의 key값 'roles'를 context에서
+      //AllowedRoles 이중에 있는지 검사한다!
       'roles',
       //export const Role = (roles: AllowedRoles[]) => SetMetadata('roles', roles);
       //role.decorator에서 가져온것이다!!('roles')

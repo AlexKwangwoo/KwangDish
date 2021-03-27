@@ -8,6 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 //nest는 모든 resolver를 실행하기전에 authGuard를 실행한다!
 @Module({
   imports: [UsersModule],
+  //UsersModule을가져와줘야 어스친구들에게 유저 제공가능!
   providers: [
     {
       provide: APP_GUARD,

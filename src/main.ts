@@ -11,10 +11,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   //위에는 dto의 유효성 검사에 필요한 코드임!!
 
+  app.enableCors(); // 이곳을 통해 프론트엔드 3000에서도 4000(백엔드)
+  //기능을 요청할수있음!!!
+
   //어플리케이션 모든곳에서 미들웨어 사용가능하게함!
   //또는 appmoudle에서 사용하고싶은곳만 접근가능하게 만들수있음!
   //만약 Injection이나 repository쓰면.. appuse는 함수컴포넌트만가능!
   // app.use(jwtMiddleware);
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();

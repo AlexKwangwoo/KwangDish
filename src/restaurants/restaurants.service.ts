@@ -30,6 +30,12 @@ import { Dish } from './entities/dish.entity';
 import { DeleteDishInput, DeleteDishOutput } from './dtos/delete-dish.dto';
 import { EditDishInput, EditDishOutput } from './dtos/edit-dish.dto';
 
+import {
+  MyRestaurantInput,
+  MyRestaurantOutput,
+} from './dtos/my-restaurant.dto';
+import { MyRestaurantsOutput } from './dtos/my-restaurants.dto';
+
 //service에서 만들어주고 resolver에서 적용시킴!!
 
 @Injectable()
@@ -82,6 +88,7 @@ export class RestaurantService {
       await this.restaurants.save(newRestaurant);
       return {
         ok: true,
+        restaurantId: newRestaurant.id,
       };
     } catch {
       return {
@@ -233,10 +240,10 @@ export class RestaurantService {
         order: {
           isPromoted: 'DESC',
         },
-        take: 25,
+        take: 12,
         //첫페이지는 스킵안해서 0*25 두번쨰는 1*25
         //25개를 스킵하고 보여줄것임!
-        skip: (page - 1) * 25,
+        skip: (page - 1) * 12,
       });
       //여기에  BBQ카테고리면 스킵제외 25개만 넣어주는것임!
       // category.restaurants = restaurants;
@@ -245,7 +252,8 @@ export class RestaurantService {
         ok: true,
         restaurants,
         category,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 12),
+        totalResults,
       };
     } catch {
       return {
@@ -262,8 +270,8 @@ export class RestaurantService {
       //첫번쨰 인자로 레스토랑 정보를 다 담고있는 배열을주고
       //두번째 인자로 결과 카운트를 리턴함!
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
-        skip: (page - 1) * 25,
-        take: 25,
+        skip: (page - 1) * 12,
+        take: 12,
         order: {
           isPromoted: 'DESC',
         }, //프로모트가 true부터 보기!
@@ -271,7 +279,7 @@ export class RestaurantService {
       return {
         ok: true,
         results: restaurants,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 12),
         totalResults,
       };
     } catch {
@@ -325,14 +333,14 @@ export class RestaurantService {
           //위의 식은 외워야함.. name을 찾을때 저렇게함!
           //ILIKE는 대소문자 사용가능!
         },
-        skip: (page - 1) * 25,
-        take: 25,
+        skip: (page - 1) * 12,
+        take: 12,
       });
       return {
         ok: true,
         restaurants,
         totalResults,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 12),
       };
     } catch {
       return { ok: false, error: 'Could not search for restaurants' };
@@ -450,6 +458,45 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not delete dish',
+      };
+    }
+  }
+
+  async myRestaurants(owner: User): Promise<MyRestaurantsOutput> {
+    try {
+      const restaurants = await this.restaurants.find({ owner });
+      return {
+        restaurants,
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not find restaurants.',
+      };
+    }
+  }
+
+  //이것은 findById보다 많은 정보를 줄것이다.. 저건 음식매뉴만 주는데
+  //위에 보면암..메뉴랑만 엮어 놨음!!!
+  // 여기는 더많은 음식정보보태서 줄것임!
+  async myRestaurant(
+    owner: User,
+    { id }: MyRestaurantInput,
+  ): Promise<MyRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(
+        { owner, id },
+        { relations: ['menu', 'orders'] },
+      );
+      return {
+        restaurant,
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not find restaurant',
       };
     }
   }
