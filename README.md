@@ -1,4 +1,8 @@
 to start : npm run start:dev
+to set before use the heroku
+->open the cmd -> set HomeDrive=C:/Users/818396/AppData/Local/heroku
+and then you can do heroku login
+heroku git:remote -a kwang-eats-backend 해로쿠가서 볼수있음!
 
 # Nuber Eats
 
