@@ -84,7 +84,7 @@ export class OrderService {
 
               //choices 속성 하나하나가 optionChoice라 생각하면 그 초이스들의
               //이름들이 같은걸 골라낼것이다!
-              const dishOptionChoice = dishOption.choices.find(
+              const dishOptionChoice = dishOption.choices?.find(
                 (optionChoice) => optionChoice.name === itemOption.choice,
               );
               //dishOption.extra가 없으면 안에서 또 선택이있어
@@ -136,6 +136,7 @@ export class OrderService {
       });
       return {
         ok: true,
+        orderId: order.id,
       };
     } catch {
       return {
