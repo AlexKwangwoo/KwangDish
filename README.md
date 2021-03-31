@@ -3,6 +3,7 @@ to set before use the heroku
 ->open the cmd -> set HomeDrive=C:/Users/818396/AppData/Local/heroku
 and then you can do heroku login
 heroku git:remote -a kwang-eats-backend 해로쿠가서 볼수있음!
+권한이 없어서 여기 터미널에서 실행이안된다!
 
 # Nuber Eats
 
