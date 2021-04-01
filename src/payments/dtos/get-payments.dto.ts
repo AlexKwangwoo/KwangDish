@@ -4,6 +4,6 @@ import { Payment } from '../entities/payment.entity';
 
 @ObjectType()
 export class GetPaymentsOutput extends CoreOutput {
-  @Field(type => [Payment], { nullable: true })
+  @Field((type) => [Payment], { nullable: true })
   payments?: Payment[];
 }
