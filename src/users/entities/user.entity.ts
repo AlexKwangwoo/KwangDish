@@ -12,6 +12,8 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 //   "^src/(.*)$": "<rootDir>/$1"
 // },
 //json에서 jest의 위에걸 통해서 수정가능하다
+
+//----------------6번 이것도 돌려줘야함!!!
 // import { Payment } from 'src/payments/entities/payment.entity';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
@@ -80,9 +82,10 @@ export class User extends CoreEntity {
   @OneToMany((type) => Order, (order) => order.customer)
   orders: Order[];
 
-  @Field((type) => [Payment])
-  @OneToMany((type) => Payment, (payment) => payment.user, { eager: true })
-  payments: Payment[];
+  //----------------5번 이것도 돌려줘야함!!!
+  // @Field((type) => [Payment])
+  // @OneToMany((type) => Payment, (payment) => payment.user, { eager: true })
+  // payments: Payment[];
 
   @Field((type) => [Order])
   @OneToMany((type) => Order, (order) => order.driver)
