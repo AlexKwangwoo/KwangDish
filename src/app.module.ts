@@ -38,12 +38,12 @@ import { UploadsModule } from './uploads/uploads.module';
       //파일 어디서 오는지? 환경설정 파일!!
       //package json 의 start:dev에 설정했음!
       //**cross-env 를 불러서 ENV라는 변수를 dev라고 지정함!
-      ignoreEnvFile: process.env.NODE_ENV === 'prod',
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
       //production환경일때는 configModule이 환경변수 파일을 무시할것임!
 
       //envFilePath를 설정했기에.. 거기서 유효성 검사를 하는것임!
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
+        NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         //어느 모드의 env인지 체크!
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
