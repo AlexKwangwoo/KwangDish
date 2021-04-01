@@ -46,11 +46,16 @@ import { UploadsModule } from './uploads/uploads.module';
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         //어느 모드의 env인지 체크!
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
+        DB_HOST: Joi.string(),
+        DB_PORT: Joi.string(),
+        DB_USERNAME: Joi.string(),
+        DB_PASSWORD: Joi.string(),
+        DB_NAME: Joi.string(),
+        // DB_HOST: Joi.string().required(),
+        // DB_PORT: Joi.string().required(),
+        // DB_USERNAME: Joi.string().required(),
+        // DB_PASSWORD: Joi.string().required(),
+        // DB_NAME: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
@@ -64,12 +69,24 @@ import { UploadsModule } from './uploads/uploads.module';
     //GraphQL decorators are for the GraphQL Schema.
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      //string으로 오기때문에 port는 + 붙여서 숫자로 바꿔준다!
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      ...(process.env.DATABASE_URL
+        ? { url: process.env.DATABASE_URL }
+        : {
+            host: process.env.DB_HOST,
+            port: +process.env.DB_PORT,
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+          }),
+      //---------해로쿠에서 매번 호스트 포트등을 바꾸기에 헤로쿠설정url에서 가져옴
+      // type: 'postgres',
+      // host: process.env.DB_HOST,
+      // port: +process.env.DB_PORT,
+      // //string으로 오기때문에 port는 + 붙여서 숫자로 바꿔준다!
+      // username: process.env.DB_USERNAME,
+      // password: process.env.DB_PASSWORD,
+      // database: process.env.DB_NAME,
+
       synchronize: process.env.NODE_ENV !== 'production',
       //이걸 true로 하면 알아서 DB와 typeorm을 자동으로 동기화한다!
       // 즉 prod모드일때는 내가 설정한다!
@@ -95,7 +112,10 @@ import { UploadsModule } from './uploads/uploads.module';
     //static모듈은 설정없는 그대로의 모듈이다!!
     GraphQLModule.forRoot({
       introspection: true,
-      playground: true,
+      playground: process.env.NODE_ENV !== 'production',
+      //이부분을 만져줘야 deploy에도 볼수있음 디폴로이하면 false로됨!
+      //개발모드에서는 안보는게 좋음!
+
       //이걸통해서 서버가 웹소켓기능을가져서 실시간기능 가능!!
       //웹소켓에는 request가 없다! 밑의 req undefined가 나올것임
       //http(mutation query)는 문제없이 잘나올것임!!
