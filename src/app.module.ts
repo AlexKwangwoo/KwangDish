@@ -46,51 +46,51 @@ import { UploadsModule } from './uploads/uploads.module';
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         //어느 모드의 env인지 체크!
-        DB_HOST: Joi.string(),
-        DB_PORT: Joi.string(),
-        DB_USERNAME: Joi.string(),
-        DB_PASSWORD: Joi.string(),
-        DB_NAME: Joi.string(),
-        // DB_HOST: Joi.string().required(),
-        // DB_PORT: Joi.string().required(),
-        // DB_USERNAME: Joi.string().required(),
-        // DB_PASSWORD: Joi.string().required(),
-        // DB_NAME: Joi.string().required(),
+        // DB_HOST: Joi.string(),
+        // DB_PORT: Joi.string(),
+        // DB_USERNAME: Joi.string(),
+        // DB_PASSWORD: Joi.string(),
+        // DB_NAME: Joi.string(),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
-        // AWS_KEY: Joi.string().required(),
-        // AWS_SECRET: Joi.string().required(),
+        AWS_KEY_ID: Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
       }),
     }),
     //testtest
     //TypeORM decorators are for the DB.
     //GraphQL decorators are for the GraphQL Schema.
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      ...(process.env.DATABASE_URL
-        ? { url: process.env.DATABASE_URL }
-        : {
-            host: process.env.DB_HOST,
-            port: +process.env.DB_PORT,
-            username: process.env.DB_USERNAME,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-          }),
+      // type: 'postgres',
+      // ...(process.env.DATABASE_URL
+      //   ? { url: process.env.DATABASE_URL }
+      //   : {
+      //       host: process.env.DB_HOST,
+      //       port: +process.env.DB_PORT,
+      //       username: process.env.DB_USERNAME,
+      //       password: process.env.DB_PASSWORD,
+      //       database: process.env.DB_NAME,
+      //     }),
       //---------해로쿠에서 매번 호스트 포트등을 바꾸기에 헤로쿠설정url에서 가져옴
       //그래서 헤로쿠에 저장한 환경 변수들도 위에꺼 host porst ...필요없음 지워도되나
       //나뒀음
 
-      // type: 'postgres',
-      // host: process.env.DB_HOST,
-      // port: +process.env.DB_PORT,
-      // //string으로 오기때문에 port는 + 붙여서 숫자로 바꿔준다!
-      // username: process.env.DB_USERNAME,
-      // password: process.env.DB_PASSWORD,
-      // database: process.env.DB_NAME,
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      //string으로 오기때문에 port는 + 붙여서 숫자로 바꿔준다!
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
 
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'production',
       //process.env.NODE_ENV !== 'production'
       //이걸 true로 하면 알아서 DB와 typeorm을 자동으로 동기화한다!
       // 즉 prod모드일때는 내가 설정한다!
@@ -108,7 +108,9 @@ import { UploadsModule } from './uploads/uploads.module';
         //..............................4여기도 활성화해줘야함
         // Payment,
       ],
-      ssl: { rejectUnauthorized: false },
+      // ssl: { rejectUnauthorized: false },
+      //deploy할때 이부분을 활성화해줘야함!!!!!!!!!!!!!!!!???? 체크해보자!!
+
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),

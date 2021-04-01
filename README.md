@@ -10,6 +10,7 @@ set HomeDrive=C:/Users/818396/AppData/Local/heroku cmd에서 할려면 이거 �
 - 밑에꺼 모르겠으면 깃허브 백앤드 setup3번부분 바뀐거 체크해보자!!
 - 페이먼트 다 컨트롤/ 해주고 app.module 4번까지 /풀어주고 유저 엔티티가서
 - 2개 더 / 풀어줘야함!!
+- https://blog.naver.com/batgirl1/222126972818 postgre와 헤로쿠 연결!!
 
 - git push heroku master
 - heroku logs --tail
