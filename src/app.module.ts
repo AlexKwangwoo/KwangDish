@@ -68,11 +68,12 @@ import { UploadsModule } from './uploads/uploads.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      synchronize: process.env.NODE_ENV !== 'prod',
+      synchronize: process.env.NODE_ENV !== 'production',
       //이걸 true로 하면 알아서 DB와 typeorm을 자동으로 동기화한다!
       // 즉 prod모드일때는 내가 설정한다!
       logging:
-        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
+        process.env.NODE_ENV !== 'production' &&
+        process.env.NODE_ENV !== 'test',
       entities: [
         User,
         Verification,
