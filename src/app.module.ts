@@ -84,6 +84,7 @@ import { UploadsModule } from './uploads/uploads.module';
         OrderItem,
         Payment,
       ],
+      ssl: { rejectUnauthorized: false },
       // entities: [Restaurant],
       //여기에 의해서 Restaurant가 DB가 되는것임!!
     }),
