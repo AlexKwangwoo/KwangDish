@@ -12,8 +12,10 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 // import { JwtMiddleware } from './jwt/jwt.middleware';
-import { PaymentsModule } from './payments/payments.module';
-import { Payment } from './payments/entities/payment.entity';
+//1.......................(4번까지)요세개 활성화 해줘야함!!
+// import { PaymentsModule } from './payments/payments.module';
+// import { Payment } from './payments/entities/payment.entity';
+// import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
@@ -25,7 +27,6 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
-import { ScheduleModule } from '@nestjs/schedule';
 import { UploadsModule } from './uploads/uploads.module';
 
 //Appmodule에 graphQl모듈을 추가할것이다!
@@ -58,6 +59,7 @@ import { UploadsModule } from './uploads/uploads.module';
         // AWS_SECRET: Joi.string().required(),
       }),
     }),
+    //testtest
     //TypeORM decorators are for the DB.
     //GraphQL decorators are for the GraphQL Schema.
     TypeOrmModule.forRoot({
@@ -82,7 +84,8 @@ import { UploadsModule } from './uploads/uploads.module';
         Dish,
         Order,
         OrderItem,
-        Payment,
+        //..............................4여기도 활성화해줘야함
+        // Payment,
       ],
       ssl: { rejectUnauthorized: false },
       // entities: [Restaurant],
@@ -126,7 +129,10 @@ import { UploadsModule } from './uploads/uploads.module';
     //resolver파일은 만든것임!!
     // schema안가지고 있어도 메모리에 자동으로 저장된다!
     // RestaurantsModule,
-    ScheduleModule.forRoot(),
+
+    //2.....................여기도 활성화해줘야함!~!!
+    // ScheduleModule.forRoot(),
+
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
       //여기서 jwtInterface에 값을 전달하고 jwtInterface가 jwtmodule에 쓰이고
@@ -138,13 +144,15 @@ import { UploadsModule } from './uploads/uploads.module';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
 
-    //이밑에친구들은 static모듈임!!
+    //이밑에친구들은 static모듈임!!!!
     AuthModule,
     UsersModule,
     RestaurantsModule,
     OrdersModule,
     CommonModule,
-    PaymentsModule,
+    //3.....................여기도 활성화해줘야함!~!!
+    // PaymentsModule,
+
     UploadsModule,
   ],
   controllers: [],
