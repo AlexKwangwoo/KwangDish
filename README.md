@@ -7,6 +7,9 @@ heroku git:remote -a kwang-eats-backend 해로쿠가서 볼수있음!
 git push heroku master 이렇게!
 set HomeDrive=C:/Users/818396/AppData/Local/heroku cmd에서 할려면 이거 매번 껐다킬때마다 쳐야하는데 그래서 bash에서 실행시키면 아무 문제없이 잘돌아감!
 
+-------------------------페이먼트 다 컨트롤/ 해주고 app.module해주고 유저 엔티티가서
+-------------------------2개 더 / 풀어줘야함!!
+
 - git push heroku master
 - heroku logs --tail
 

@@ -94,6 +94,8 @@ import { UploadsModule } from './uploads/uploads.module';
     //dynamic모듈은 설정을 할수있는 모듈이고
     //static모듈은 설정없는 그대로의 모듈이다!!
     GraphQLModule.forRoot({
+      introspection: true,
+      playground: true,
       //이걸통해서 서버가 웹소켓기능을가져서 실시간기능 가능!!
       //웹소켓에는 request가 없다! 밑의 req undefined가 나올것임
       //http(mutation query)는 문제없이 잘나올것임!!
