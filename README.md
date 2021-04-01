@@ -3,7 +3,9 @@ to set before use the heroku
 ->open the cmd -> set HomeDrive=C:/Users/818396/AppData/Local/heroku
 and then you can do heroku login
 heroku git:remote -a kwang-eats-backend 해로쿠가서 볼수있음!
-권한이 없어서 여기 터미널에서 실행이안된다!
+권한이 없어서 여기 터미널에서 실행이안된다! add 와 commit을 하고 헤로쿠에도 해줘야함!!
+git push heroku master 이렇게!
+set HomeDrive=C:/Users/818396/AppData/Local/heroku cmd에서 할려면 이거 매번 껐다킬때마다 쳐야하는데 그래서 bash에서 실행시키면 아무 문제없이 잘돌아감!
 
 # Nuber Eats
 
