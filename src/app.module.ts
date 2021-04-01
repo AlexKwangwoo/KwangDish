@@ -138,7 +138,7 @@ import { UploadsModule } from './uploads/uploads.module';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
 
-    //이밑에친구들은 static모듈임!!
+    //이밑에친구들은 static모듈임!!!!
     AuthModule,
     UsersModule,
     RestaurantsModule,
