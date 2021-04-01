@@ -79,6 +79,9 @@ import { UploadsModule } from './uploads/uploads.module';
             database: process.env.DB_NAME,
           }),
       //---------해로쿠에서 매번 호스트 포트등을 바꾸기에 헤로쿠설정url에서 가져옴
+      //그래서 헤로쿠에 저장한 환경 변수들도 위에꺼 host porst ...필요없음 지워도되나
+      //나뒀음
+
       // type: 'postgres',
       // host: process.env.DB_HOST,
       // port: +process.env.DB_PORT,
@@ -112,7 +115,9 @@ import { UploadsModule } from './uploads/uploads.module';
     //static모듈은 설정없는 그대로의 모듈이다!!
     GraphQLModule.forRoot({
       introspection: true,
-      playground: process.env.NODE_ENV !== 'production',
+      playground: true,
+
+      // playground: process.env.NODE_ENV !== 'production',
       //이부분을 만져줘야 deploy에도 볼수있음 디폴로이하면 false로됨!
       //개발모드에서는 안보는게 좋음!
 
