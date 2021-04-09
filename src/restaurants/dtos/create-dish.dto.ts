@@ -7,6 +7,7 @@ export class CreateDishInput extends PickType(Dish, [
   'name',
   'price',
   'description',
+  'photo',
   'options',
 ]) {
   //어떤 레스토랑에 추가할 것인가?

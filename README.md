@@ -12,6 +12,7 @@ set HomeDrive=C:/Users/818396/AppData/Local/heroku cmd에서 할려면 이거 �
 - 2개 더 / 풀어줘야함!!
 - https://blog.naver.com/batgirl1/222126972818 postgre와 헤로쿠 연결!!
 
+- commit뒤에 push 해야함!!
 - git push heroku master
 - heroku logs --tail
 
